@@ -4,9 +4,15 @@ log-pipeline:
       port: 2021
       path: "/log/ingest"
   processor:
-    - grok:
-        match:
-          "log": ["%{COMMONAPACHELOG}"]
+    - convert_type:
+        key: "response_code"
+        type: "integer"
+    - convert_type:
+        key: "body_sent_bytes"
+        type: "long"
+    - date:
+        from_time_received: true
+        destination: "@timestamp"
   sink:
     - opensearch:
         hosts: ["http://opensearch:9200"]
